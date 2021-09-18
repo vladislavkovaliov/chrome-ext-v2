@@ -27,9 +27,6 @@ describe("", () => {
     });
 
     describe("onMessage()", () => {
-       it("", () => {
-           
-       });
     });
 
     describe("dospose()", () => {
