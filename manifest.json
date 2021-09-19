@@ -1,15 +1,11 @@
 {
     "name": "chrome-ext",
-    "oauth2": {
-      "client_id": "596255199581-of0johgn21lv5lqusf4rh5luj651puqt.apps.googleusercontent.com",
-      "scopes":["https://www.googleapis.com/auth/spreadsheets"]
-    },
     "version": "1.0",
     "manifest_version": 2,
     "content_scripts": [
       {
         "matches": [
-          "https://oshisha.net/personal/cart/"
+          "https://oshisha.net/*"
         ],
         "js": [
           "dist/content.js"
@@ -17,6 +13,9 @@
       }
     ],
 
-  
-    "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'"
+    "background": {
+      "scripts": ["dist/background.js"]
+    },
+      
+    "content_security_policy": "script-src 'self' 'unsafe-eval' https://apis.google.com; object-src 'self'"
   }

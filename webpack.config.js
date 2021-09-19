@@ -9,7 +9,8 @@ const stylesHandler = "style-loader";
 
 const config = {
   entry: {
-    content: "./src/content/index.ts"
+    content: "./src/content/index.ts",
+    background: "./src/background/index.ts"
   },
 
   output: {

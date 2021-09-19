@@ -4,10 +4,13 @@ const selectors: Record<string, string> = {
 
 class Content {
     private _table: Element = null;
+    private _isReady: boolean = false;
 
     public init = () => {
         this._table = this.getTableElement();
         this.inject();
+
+        this._isReady = true;
     };
 
     /**
@@ -39,6 +42,10 @@ class Content {
 
     public get table(): Element | null {
         return this._table;
+    }
+
+    public get isReady(): Boolean {
+        return this._isReady;
     }
 
     private getTableElement = (): Element => {
