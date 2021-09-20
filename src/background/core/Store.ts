@@ -9,6 +9,7 @@ export interface Item {
 
 export class Store {
     public map: Map<string, Item> = observable.map();
+    public token: string = "";
 
     constructor() {
         makeObservable(this, {
@@ -16,6 +17,14 @@ export class Store {
             count: computed,
             google: computed,
         });
+
+        // @ts-ignore
+        chrome.identity.getAuthToken({interactive: true}, function(token) {
+            console.log('got the token', token);
+            // const provider = new GoogleProvider();
+            // // @ts-ignore
+            // window.provider = provider;
+        })
     }
 
     public insert = (item: Item) => {
