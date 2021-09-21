@@ -5,6 +5,7 @@ const selectors: Record<string, string> = {
 class Content {
     private _table: Element = null;
     private _isReady: boolean = false;
+    private _map: Map<string, any> = new Map();
 
     public init = () => {
         this._table = this.getTableElement();

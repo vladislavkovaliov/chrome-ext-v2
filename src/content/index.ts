@@ -37,18 +37,28 @@ const handleTableClick = (event: Event) => {
     const id = element.getAttribute("id");
 
     if (id === "add-into-excel") {
-        handler.sendMessage(Methods.ADD, {
+        handler.sendMessage(Methods.ADD, (isDone: boolean) => {
+            if (isDone) {
+                element.textContent = "Удалить";
+                element.setAttribute("id", "remove-from-excel");
+            }
+        }, {
             name: getName(tr),
-            totalPrice: getPrice(tr) * getCount(tr),
+            price: getPrice(tr),
             url: getUrl(tr),
             count: getCount(tr),
         });
     }
 
     if (id === "remove-from-excel") {
-        handler.sendMessage(Methods.REMOVE, {
+        handler.sendMessage(Methods.REMOVE, (isDone: boolean) => {
+            if (isDone) {
+                element.textContent = "Добавить";
+                element.setAttribute("id", "add-into-excel");
+            }
+        }, {
             name: getName(tr),
-            totalPrice: getPrice(tr) * getCount(tr),
+            price: getPrice(tr),
             url: getUrl(tr),
             count: getCount(tr),
         });
@@ -56,18 +66,18 @@ const handleTableClick = (event: Event) => {
     
     if (element.classList.contains("basket-item-amount-btn-plus") || 
         element.classList.contains("basket-item-amount-btn-minus")) {
-            handler.sendMessage(Methods.UPDATE, {
+            handler.sendMessage(Methods.UPDATE, () => {}, {
                 name: getName(tr),
-                totalPrice: getPrice(tr) * getCount(tr),
+                price: getPrice(tr),
                 url: getUrl(tr),
                 count: getCount(tr),
             });
     }
 
     if (element.classList.contains("cart-remove")) {
-        handler.sendMessage(Methods.REMOVE_FROM_CART, {
+        handler.sendMessage(Methods.REMOVE_FROM_CART, () => {}, {
             name: getName(tr),
-            totalPrice: getPrice(tr) * getCount(tr),
+            price: getPrice(tr),
             url: getUrl(tr),
             count: getCount(tr),
         });
@@ -78,7 +88,8 @@ const content = new Content();
 content.init();
 
 if (content.isReady) {
-    handler.sendMessage(Methods.INITIALIZED);
+    handler.sendMessage(Methods.INITIALIZED, () => {});
+    
 }
 
 if (content.table) {

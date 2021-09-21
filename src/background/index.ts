@@ -1,13 +1,6 @@
 import { Store } from "./core/Store";
 
-// @ts-ignore
-chrome.runtime.onMessage.addListener(function(request: any, sender: any, sendResponse: any) {
-    console.log(request);
+const store = new Store({
     // @ts-ignore
-    sendResponse({fa: 42});
-
+    onMessage: chrome.runtime.onMessage
 });
-
-console.log(2)
-
-const store = new Store();

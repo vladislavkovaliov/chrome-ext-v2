@@ -1,4 +1,5 @@
 import { observable, makeObservable, computed } from "mobx";
+import {  Methods } from "../../core/Handler";
 
 export interface Item {
     name: string;
@@ -10,8 +11,11 @@ export interface Item {
 export class Store {
     public map: Map<string, Item> = observable.map();
     public token: string = "";
+    private onMessage: any;
 
-    constructor() {
+    constructor({
+        onMessage
+    }: { onMessage: any }) {
         makeObservable(this, {
             map: observable,    
             count: computed,
@@ -24,10 +28,16 @@ export class Store {
             // const provider = new GoogleProvider();
             // // @ts-ignore
             // window.provider = provider;
-        })
+        });
+
+        this.onMessage = onMessage;
+        this.subscribe();
     }
 
     public insert = (item: Item) => {
+        if(this.map.has(item.name)) {
+            this.update(item);
+        }
         this.map.set(item.name, item);
     };
 
@@ -69,5 +79,32 @@ export class Store {
         }
         
         return acc;
+    };
+
+    public subscribe = () => {
+        this.onMessage.addListener(this.handleMessage);
+    };
+
+    private handleMessage = (request: any, sender: any, sendResponse: any): boolean => {
+        const { method, payload } = request;
+
+        switch (method) {
+            case Methods.ADD: {
+                this.insert(payload);
+                sendResponse(true);
+                break;
+            }
+            case Methods.REMOVE: {
+                this.remove(payload);
+                sendResponse(true);
+                break;
+            }
+            default: {
+                sendResponse(false);
+                break;
+            }
+        }
+
+        return true;
     };
 }

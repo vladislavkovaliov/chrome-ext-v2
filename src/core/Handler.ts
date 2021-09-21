@@ -1,6 +1,7 @@
 
 export enum Methods {
     ADD,
+    ADDED,
     REMOVE,
     UPDATE,
     REMOVE_FROM_CART,
@@ -8,7 +9,7 @@ export enum Methods {
 }
 
 class Handler {
-    private _sendMessage: (x: any) => void;
+    private _sendMessage: (x: any, cb: (data: any) => void) => void;
     private _onMessage: (x: any) => void;
     private _onInitialized: (x: any) => void;
 
@@ -17,7 +18,7 @@ class Handler {
         onMessage,
         onInitialized,
     }: {
-        sendMessage: (x: any) => void,
+        sendMessage: (x: any, cb: (data: any) => void) => void,
         onMessage: (x: any) => void,
         onInitialized: (x: any) => void,
     }) {
@@ -26,33 +27,33 @@ class Handler {
         this._onInitialized = onInitialized;
     }
 
-    public sendMessage = (method: Methods, payload?: any) => {
+    public sendMessage = (method: Methods, cb: (value: boolean) => void, payload?: any) => {
         switch (method) {
             case Methods.ADD: {
                 this._sendMessage({
                     method: Methods.ADD,
                     payload: payload,
-                });
+                }, cb);
                 break;
             }
             case Methods.INITIALIZED: {
                 this._sendMessage({
                     method: Methods.INITIALIZED,
-                });
+                }, cb);
                 break;
             }
             case Methods.REMOVE: {
                 this._sendMessage({
                     method: Methods.REMOVE,
                     payload: payload,
-                });
+                }, cb);
                 break;
             }
             case Methods.REMOVE_FROM_CART: {
                 this._sendMessage({
                     method: Methods.REMOVE_FROM_CART,
                     payload: payload,
-                });
+                }, cb);
             }
             default: {
                 break;
