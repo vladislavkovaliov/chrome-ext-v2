@@ -54,6 +54,14 @@ class Handler {
                     method: Methods.REMOVE_FROM_CART,
                     payload: payload,
                 }, cb);
+                break;
+            }
+            case Methods.UPDATE: {
+                this._sendMessage({
+                    method: Methods.UPDATE,
+                    payload: payload,
+                }, cb);
+                break;
             }
             default: {
                 break;

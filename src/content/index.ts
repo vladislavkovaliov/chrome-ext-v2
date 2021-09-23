@@ -10,23 +10,6 @@ const handler = new Handler({
     onInitialized: chrome.runtime.sendMessage,
 });
 
-
-class ItemsStore {
-    private _map: Map<string, any> = new Map();
-
-    constructor() {}
-
-    public insert = () => {}
-
-    public remove = () => {}
-
-    public update = () => {}
-
-    public getAll = () => {}
-
-    public getById = () => {}
-}
-
 const handleTableClick = (event: Event) => {
     const tr = (event.target as Element).closest("tr");
     if (!tr) {
@@ -84,14 +67,39 @@ const handleTableClick = (event: Event) => {
     }
 };
 
+const initMutationObserver = (table: Element): void => {
+    if (!table) {
+        return;
+    }
+
+    let observer = new MutationObserver((data) => {
+        if (data[0].target === table.querySelector("tbody")) {
+            data[0].removedNodes.forEach((x: HTMLTableRowElement) => {
+                handler.sendMessage(Methods.REMOVE_FROM_CART, () => {}, {
+                    name: getName(x),
+                    price: getPrice(x),
+                    url: getUrl(x),
+                    count: getCount(x),
+                });
+            });
+        }
+    });
+
+    observer.observe(table.querySelector("tbody"), {
+        childList: true,
+        subtree: true,
+        characterDataOldValue: true,
+    });
+};
+
 const content = new Content();
 content.init();
 
 if (content.isReady) {
     handler.sendMessage(Methods.INITIALIZED, () => {});
-    
 }
 
 if (content.table) {
     content.attachClickTable(handleTableClick);
+    initMutationObserver(content.table);
 }

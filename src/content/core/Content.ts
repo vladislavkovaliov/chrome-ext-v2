@@ -4,11 +4,13 @@ const selectors: Record<string, string> = {
 
 class Content {
     private _table: Element = null;
+    private _removeElement: Element = null;
     private _isReady: boolean = false;
     private _map: Map<string, any> = new Map();
 
     public init = () => {
         this._table = this.getTableElement();
+        this._removeElement = this.getRemoveElement();
         this.inject();
 
         this._isReady = true;
@@ -41,6 +43,14 @@ class Content {
         this._table.addEventListener('click', cb);
     };
 
+    public attachRemoveItem = (cb: (event: Event) => void) => {        
+        if (!this._removeElement) {
+            return;
+        }
+
+        this._removeElement.addEventListener("click", cb);   
+    };
+
     public get table(): Element | null {
         return this._table;
     }
@@ -49,10 +59,16 @@ class Content {
         return this._isReady;
     }
 
-    private getTableElement = (): Element => {
+    private getTableElement = (): Element | null => {
         const table = document.querySelector(selectors.BASKET_ITEM_TABLE);
 
         return table;
+    };
+
+    private getRemoveElement = (): Element | null => {
+        const removeElement = document.querySelector(".cart-page__products-td-remove a");
+
+        return removeElement;
     };
 }
 

@@ -25,9 +25,6 @@ export class Store {
         // @ts-ignore
         chrome.identity.getAuthToken({interactive: true}, function(token) {
             console.log('got the token', token);
-            // const provider = new GoogleProvider();
-            // // @ts-ignore
-            // window.provider = provider;
         });
 
         this.onMessage = onMessage;
@@ -99,12 +96,23 @@ export class Store {
                 sendResponse(true);
                 break;
             }
+            case Methods.UPDATE: {
+                this.update(payload);
+                sendResponse(true);
+                break;
+            }
+            case Methods.REMOVE_FROM_CART: {
+                this.remove(payload);
+                sendResponse(true);
+                break;
+            }
             default: {
                 sendResponse(false);
                 break;
             }
         }
 
+        console.log(this.google);
         return true;
     };
 }
