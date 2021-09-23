@@ -1,4 +1,4 @@
-import { observable, makeObservable, computed } from "mobx";
+import { observable, makeObservable, computed, reaction, action } from "mobx";
 import {  Methods } from "../../core/Handler";
 
 export interface Item {
@@ -20,15 +20,45 @@ export class Store {
             map: observable,    
             count: computed,
             google: computed,
+            token: observable,
         });
 
         // @ts-ignore
-        chrome.identity.getAuthToken({interactive: true}, function(token) {
+        chrome.identity.getAuthToken({interactive: true}, (token) => {
             console.log('got the token', token);
+            this.token = token;
         });
 
         this.onMessage = onMessage;
         this.subscribe();
+
+        reaction(() => this.google, async (google) => {
+            // try {
+            //     const response = await fetch('https://sheets.googleapis.com/v4/spreadsheets/1zQJHG5Ls9L4scLRK2IOamVvz4hm_Yn43piPG5vsjnGg/values/List2', {
+            //         headers: {
+            //             'Authorization': `Bearer ${this.token}`,
+            //         }
+            //     });
+            //     const json = await response.json()
+            //     console.log(json);
+            // } catch(e) {
+            //     console.error(e);
+            // }
+            
+            await fetch('https://sheets.googleapis.com/v4/spreadsheets/1zQJHG5Ls9L4scLRK2IOamVvz4hm_Yn43piPG5vsjnGg/values/List2?valueInputOption=RAW', {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                },
+                body: JSON.stringify({
+                    values: [
+                        [],
+                        ...google,
+                        ...Array.from({length: 1000 - google.length}, _ => ["", "", ""]),
+                    ]
+                })
+            });
+        });
     }
 
     public insert = (item: Item) => {
@@ -43,6 +73,10 @@ export class Store {
     };
 
     public update = (item: Item) => {
+        if (!this.map.has(item.name)) {
+            return;
+        }
+
         this.map.set(item.name, item);
     };
 
@@ -54,7 +88,7 @@ export class Store {
         return this.map.size;
     }
 
-    public get google(): Array<[string, string]> {
+    public get google(): Array<[string, string, string]> {
         if (!this.map.size) {
             return [];
         }
@@ -62,19 +96,23 @@ export class Store {
         return Array.from(this.map.values()).reduce(Store.mapGoogle, []);
     }
 
-    public static mapGoogle = (acc: Array<[string, string]>, item: Item) => {
+    public static mapGoogle = (acc: Array<[string, string, string]>, item: Item) => {
         if (item.count > 1) {
             for(let i = 0; i < item.count; i++) {
                 acc.push([
-                    item.name, String(item.price),
+                    item.name, "", String(item.price),
                 ]);
             }
         } else {
             acc.push([
-                item.name, String(item.price),
+                item.name, "", String(item.price),
             ]);
         }
-        
+
+        // for (let i = acc.length; i < 1000 - acc.length; i++) {
+        //     acc.push(["", "", ""]);
+        // }
+
         return acc;
     };
 
@@ -112,7 +150,6 @@ export class Store {
             }
         }
 
-        console.log(this.google);
         return true;
     };
 }
