@@ -17,23 +17,26 @@ export class Store {
         onMessage
     }: { onMessage: any }) {
         makeObservable(this, {
-            map: observable,    
+            map: observable,
             count: computed,
             google: computed,
             token: observable,
+            insert: action,
+            remove: action,
+            update: action,
+            get: action,
         });
 
         // @ts-ignore
         chrome.identity.getAuthToken({interactive: true}, (token) => {
-            console.log('got the token', token);
             this.token = token;
         });
 
         this.onMessage = onMessage;
         this.subscribe();
 
-        reaction(() => this.google, async (google) => {    
-            await fetch('https://sheets.googleapis.com/v4/spreadsheets/1zQJHG5Ls9L4scLRK2IOamVvz4hm_Yn43piPG5vsjnGg/values/List2?valueInputOption=RAW', {
+        reaction(() => this.google, async (google) => {
+            await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${process.env.SPREADSHEET_ID}/values/${process.env.SHEET_ID}?valueInputOption=RAW`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${this.token}`,
@@ -125,6 +128,10 @@ export class Store {
             }
             case Methods.REMOVE_FROM_CART: {
                 this.remove(payload);
+                sendResponse(true);
+                break;
+            }
+            case Methods.INITIALIZED: {
                 sendResponse(true);
                 break;
             }

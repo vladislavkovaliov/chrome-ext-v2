@@ -2,11 +2,8 @@
 
 This project has been created using **webpack-cli**, you can now run
 ```
-npm run build
-```
-or
-```
-yarn build
+npm install
+SPREADSHEET_ID=__SPREADSHEET_ID__ SHEET_ID=__SHEET_ID__ npm run build
 ```
 to bundle your application
 
