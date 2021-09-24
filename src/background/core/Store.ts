@@ -32,19 +32,7 @@ export class Store {
         this.onMessage = onMessage;
         this.subscribe();
 
-        reaction(() => this.google, async (google) => {
-            // try {
-            //     const response = await fetch('https://sheets.googleapis.com/v4/spreadsheets/1zQJHG5Ls9L4scLRK2IOamVvz4hm_Yn43piPG5vsjnGg/values/List2', {
-            //         headers: {
-            //             'Authorization': `Bearer ${this.token}`,
-            //         }
-            //     });
-            //     const json = await response.json()
-            //     console.log(json);
-            // } catch(e) {
-            //     console.error(e);
-            // }
-            
+        reaction(() => this.google, async (google) => {    
             await fetch('https://sheets.googleapis.com/v4/spreadsheets/1zQJHG5Ls9L4scLRK2IOamVvz4hm_Yn43piPG5vsjnGg/values/List2?valueInputOption=RAW', {
                 method: 'PUT',
                 headers: {
@@ -108,10 +96,6 @@ export class Store {
                 item.name, "", String(item.price),
             ]);
         }
-
-        // for (let i = acc.length; i < 1000 - acc.length; i++) {
-        //     acc.push(["", "", ""]);
-        // }
 
         return acc;
     };

@@ -1,0 +1,30 @@
+{
+    "name": "chrome-ext",
+    "version": "1.0",
+    "manifest_version": 2,
+    "content_scripts": [
+      {
+        "matches": [
+          "https://oshisha.net/*"
+        ],
+        "js": [
+          "dist/content.js"
+        ]
+      }
+    ],
+
+    "background": {
+      "scripts": ["dist/background.js"]
+    },
+
+    "oauth2": {
+      "client_id": "__CLIENT_ID__.apps.googleusercontent.com",
+      "scopes":["https://www.googleapis.com/auth/spreadsheets"]
+    },
+
+    "permissions": [
+      "identity"
+    ],
+      
+    "content_security_policy": "script-src 'self' 'unsafe-eval' https://apis.google.com; object-src 'self'"
+}
